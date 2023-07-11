@@ -7,7 +7,7 @@ import {
 	Model,
 } from 'sequelize'
 import DataBaseConnection from '../dataBase/sequelizeSingleton'
-import { Subscription, initSubscription } from './subscription'
+import { Subscription } from './subscription'
 
 export class Donation extends Model<
   InferAttributes<Donation>,

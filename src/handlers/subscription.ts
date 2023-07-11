@@ -51,9 +51,6 @@ export const GetSubscriptions = async (): Promise<Subscription[]> => {
 		await initSubscription()
 		const subscriptions = await Subscription.findAll(SUBSCRIPTION_FIND_OPTIONS)
 
-		// @ts-ignore
-		subscriptions.forEach(sub => sub.totalDonated = sub['donation.totalDonated'])
-
 		if (!subscriptions?.length) {
 			console.log(`There are no subscriptions.`)
 			return []
@@ -66,9 +63,12 @@ export const GetSubscriptions = async (): Promise<Subscription[]> => {
 }
 
 const chargeSubscription = async (subscription: Subscription): Promise<boolean> => {
-	return new Promise<boolean>((resolve, reject) => {
+	return new Promise<boolean>((resolve) => {
 		// process payment emulation
-		setTimeout(() => resolve(true), 1500)
+		setTimeout(() => {
+			console.log(`Payment charge for subscription id: ${subscription.id}`)
+			resolve(true)
+		}, 1500)
 	})
 }
 
@@ -130,7 +130,7 @@ const processNextDonation = async (
 
 export const UpdateSubscription = async (payload: SubscriptionPayload): Promise<Subscription> => {
 	try {
-		let newSubscriptionEntity = { ...payload }
+		const newSubscriptionEntity = { ...payload }
 		const subscriptionToUpdate = await Subscription.findByPk(newSubscriptionEntity.id)
 		if (subscriptionToUpdate) {
 			// When nextDonationDate is updated it verifies if a payment/donation should be process

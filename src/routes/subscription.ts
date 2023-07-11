@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { GetSubscriptions, SubscriptionPayload, UpdateSubscription } from '../handlers/subscription'
-import { Subscription } from '../models/subscription'
 
 export const RouteGetSubscriptions = async (req: Request, res: Response) => {
   try {
