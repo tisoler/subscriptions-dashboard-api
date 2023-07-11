@@ -9,7 +9,6 @@ import {
 import DataBaseConnection from '../dataBase/sequelizeSingleton'
 import { Interval, initInterval } from './interval'
 import { PaymentMethod, initPaymentMethod } from './paymentMethod'
-import { CreditCardBrand, initCreditCardBrand } from './creditCardBrand'
 import { Donation, initDonation } from './donation'
 
 export class Subscription extends Model<
@@ -21,7 +20,6 @@ export class Subscription extends Model<
 	declare idInterval: ForeignKey<Interval['id']>
   declare nextDonation: Date
 	declare idPaymentMethod: ForeignKey<PaymentMethod['id']>
-	declare idCreditCardBrand: ForeignKey<CreditCardBrand['id']>
   declare endingCardNumber: CreationOptional<number>
 }
 
@@ -40,10 +38,6 @@ export const initSubscription = async () => {
 				allowNull: false
 			},
 			idPaymentMethod: {
-				type: DataTypes.INTEGER.UNSIGNED,
-				allowNull: false
-			},
-			idCreditCardBrand: {
 				type: DataTypes.INTEGER.UNSIGNED,
 				allowNull: false
 			},
@@ -69,7 +63,6 @@ export const initSubscription = async () => {
 
 	await initInterval()
 	await initPaymentMethod()
-	await initCreditCardBrand()
 	await initDonation()
 
 	Subscription.hasOne(Interval, {
@@ -77,9 +70,6 @@ export const initSubscription = async () => {
 	})
 	Subscription.hasOne(PaymentMethod, {
 		foreignKey: 'id', sourceKey: 'idPaymentMethod', as: 'paymentMethod',
-	})
-	Subscription.hasOne(CreditCardBrand, {
-		foreignKey: 'id', sourceKey: 'idCreditCardBrand', as: 'creditCardBrand',
 	})
 	Subscription.hasMany(Donation, {
 		sourceKey: 'id', foreignKey: 'idSubscription', as: 'donation',

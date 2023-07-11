@@ -13,6 +13,7 @@ export class Interval extends Model<
 > {
   declare id: CreationOptional<number>
   declare description: string
+	declare numberOfDays: number
 }
 
 export const initInterval = async () => {
@@ -25,10 +26,14 @@ export const initInterval = async () => {
 				autoIncrement: true,
 				primaryKey: true
 			},
-				description: {
+			description: {
 				type: new DataTypes.STRING(150),
 				allowNull: false
 			},
+			numberOfDays: {
+				type: DataTypes.INTEGER.UNSIGNED,
+				allowNull: false
+			}
 		},
 		{
 			sequelize,
