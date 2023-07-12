@@ -76,7 +76,7 @@ describe('subscription handler', () => {
       expect(nexDonationDate).to.equal(TOMORROW)
     })
 
-    it('generates nextDonationDate according to the interval when nextDonation = today and there already is a donation for today', async () => {
+    it('generates nextDonationDate according to the interval when nextDonation = today and there is already a donation for today', async () => {
       sinon.stub(Donation, 'findAll').callsFake(
         () => Promise.resolve([{ id: 4, amount: 400, date: new Date() } as Donation])
       )
@@ -93,7 +93,7 @@ describe('subscription handler', () => {
       expect(nexDonationDate).to.equal(expectedDate)
     })
 
-    it('generates nextDonationDate according to the interval when nextDonation = today and there is not donations for today', async () => {
+    it('generates nextDonationDate according to the interval when nextDonation = today and there are not donations for today', async () => {
       sinon.stub(Donation, 'findAll').callsFake(() => Promise.resolve([]))
       const chargeSubscriptionStub = sinon.stub(SubscriptionModule, 'chargeSubscription')
       chargeSubscriptionStub.callsFake(() => Promise.resolve(true))
