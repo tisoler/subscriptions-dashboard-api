@@ -62,7 +62,7 @@ export const GetSubscriptions = async (): Promise<Subscription[]> => {
 	}
 }
 
-const chargeSubscription = async (subscription: Subscription): Promise<boolean> => {
+export const chargeSubscription = async (subscription: Subscription): Promise<boolean> => {
 	return new Promise<boolean>((resolve) => {
 		// process payment emulation
 		setTimeout(() => {
@@ -72,7 +72,7 @@ const chargeSubscription = async (subscription: Subscription): Promise<boolean> 
 	})
 }
 
-const generateNextDonationDate = async (subscription: Subscription): Promise<Date> => {
+export const generateNextDonationDate = async (subscription: Subscription): Promise<Date> => {
 	const interval = await Interval.findByPk(subscription.idInterval)
 	if (!interval) {
 		console.log(`Unexisting intervalfor subscription id: ${subscription.id}`)
@@ -84,18 +84,19 @@ const generateNextDonationDate = async (subscription: Subscription): Promise<Dat
 	return nextDonationDate
 }
 
-const processNextDonation = async (
+export const processNextDonation = async (
 	newSubscriptionEntity: SubscriptionPayload,
 	currentSubscriptionEntity: Subscription,
 ): Promise<Date> => {
-	const nextDonationDate = new Date(newSubscriptionEntity.nextDonation).toDateString()
-	const today = new Date().toDateString()
-	if (new Date(nextDonationDate) < new Date(today)) {
+	const nextDonationDateString = new Date(newSubscriptionEntity.nextDonation).toDateString()
+	const todayString = new Date().toDateString()
+
+	if (new Date(nextDonationDateString) < new Date(todayString)) {
 		console.log(`Next donation date cannot be before today - Subscription id ${currentSubscriptionEntity.id}`)
 		throw new Error(`Next donation date cannot be before today - Subscription id ${currentSubscriptionEntity.id}`)
 	}
 	// If next donation date was changed to today, evaluate donation payment
-	if (nextDonationDate === today) {
+	if (nextDonationDateString === todayString) {
 		// Verify if there is an existing donation for today, in this case the payment has already been charged
 		const subscriptionDonations = await Donation.findAll({
 			where: { idSubscription: newSubscriptionEntity.id, date: Sequelize.literal('DATE(date) = CURRENT_DATE()') }
@@ -106,7 +107,7 @@ const processNextDonation = async (
 			await chargeSubscription(currentSubscriptionEntity)
 				.then(async () => {
 					// Add donation record
-					const newSubscriptionDonation = new Donation({
+					const newSubscriptionDonation = await Donation.create({
 						idSubscription: currentSubscriptionEntity.id,
 						amount: currentSubscriptionEntity.amount,
 						date: new Date(),
